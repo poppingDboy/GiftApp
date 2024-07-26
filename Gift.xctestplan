@@ -1,0 +1,43 @@
+{
+  "configurations" : [
+    {
+      "id" : "327CB624-0EC8-4BAA-9150-CB8A48F41C55",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-FIRDebugEnabled"
+      }
+    ],
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Gift.xcodeproj",
+      "identifier" : "E334A4782C1B36A80034523E",
+      "name" : "Gift"
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Gift.xcodeproj",
+        "identifier" : "E334A4882C1B36AA0034523E",
+        "name" : "GiftTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Gift.xcodeproj",
+        "identifier" : "E334A4922C1B36AA0034523E",
+        "name" : "GiftUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
