@@ -1,8 +1,8 @@
 import Foundation
 import Firebase
 
-struct ProfileCodable: Codable {
-    let id: UUID
+struct ProfileCodable: Identifiable, Codable {
+    var id = UUID()
     var emailAddress: String
     var password: String
     var fullName: String

@@ -1,9 +1,8 @@
 import Foundation
 import Firebase
 
-// RestGift
-struct GiftCodable: Codable {
-    let id: UUID
+struct GiftCodable: Codable, Identifiable {
+    var id = UUID()
     let name: String
     let price: Double
     let address: String?

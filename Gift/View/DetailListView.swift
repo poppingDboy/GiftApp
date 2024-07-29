@@ -1,14 +1,13 @@
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
 
 struct DetailListView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) private var modelContext
     @ObservedObject var viewModel: DetailListViewModel
     @State private var isShowingShareSheet = false
 
-    init(modelContext: ModelContext, listGift: ListGift) {
-        _viewModel = ObservedObject(wrappedValue: DetailListViewModel(list: listGift, modelContext: modelContext))
+    init(firestore: Firestore, listGift: ListGiftCodable) {
+        _viewModel = ObservedObject(wrappedValue: DetailListViewModel(firestore: firestore, list: listGift))
     }
 
     var body: some View {
@@ -23,7 +22,7 @@ struct DetailListView: View {
 
                 Spacer()
 
-                NavigationLink(destination: CreateGiftView(modelContext: modelContext, viewModelDetail: viewModel)) {
+                NavigationLink(destination: CreateGiftView(firestore: viewModel.firestore, viewModelDetail: viewModel)) {
                     Text("Add new gift")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -47,7 +46,7 @@ struct DetailListView: View {
                             .padding()
                     } else {
                         ForEach(viewModel.giftsToPurchase) { gift in
-                            NavigationLink(destination: DetailGiftView(modelContext: modelContext, gift: gift, listGift: viewModel.list)) {
+                            NavigationLink(destination: DetailGiftView(firestore: viewModel.firestore, gift: gift, listGift: viewModel.list)) {
                                 GiftRow(gift: gift)
                                     .listRowSeparatorTint(Color(.systemGray))
                             }
@@ -64,7 +63,7 @@ struct DetailListView: View {
                             .padding()
                     } else {
                         ForEach(viewModel.purchasedGifts) { gift in
-                            NavigationLink(destination: DetailGiftView(modelContext: modelContext, gift: gift, listGift: viewModel.list)) {
+                            NavigationLink(destination: DetailGiftView(firestore: viewModel.firestore, gift: gift, listGift: viewModel.list)) {
                                 GiftRow(gift: gift)
                                     .listRowSeparatorTint(Color(.lightGray))
                             }
@@ -83,7 +82,7 @@ struct DetailListView: View {
                 Spacer()
 
                 Button(action: {
-                    viewModel.removeListGift() { error in
+                    viewModel.removeListGift { error in
                         dismiss()
                     }
                 }) {
@@ -114,7 +113,6 @@ struct DetailListView: View {
         .padding()
         .onAppear {
             viewModel.fetchGifts()
-            print("LA VIEW EST BIEN FRAICHE fraiche fraicheeeee")
         }
         .sheet(isPresented: $isShowingShareSheet) {
             ActivityView(activityItems: [viewModel.shareText])
@@ -122,11 +120,8 @@ struct DetailListView: View {
     }
 }
 
-
-
-
 struct GiftRow: View {
-    let gift: Gift
+    let gift: GiftCodable
 
     var body: some View {
         HStack {
@@ -140,4 +135,8 @@ struct GiftRow: View {
     }
 }
 
-
+#Preview {
+    let firestore = Firestore.firestore()
+    let listGift = ListGiftCodable(name: "Sample List", dateCreation: Date(), dateExpiration: Date(), profileId: "1")
+    return DetailListView(firestore: firestore, listGift: listGift)
+}

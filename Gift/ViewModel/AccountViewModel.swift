@@ -1,9 +1,8 @@
 import Foundation
-import SwiftData
 import Firebase
 
 class AccountViewModel: ObservableObject {
-    @Published var accounts: [Profile] = []
+    @Published var accounts: [ProfileCodable] = []
     @Published var emailAdress: String = ""
     @Published var password: String = ""
     @Published var confirmPassword: String = ""
@@ -14,24 +13,21 @@ class AccountViewModel: ObservableObject {
     @Published var alertMessage = ""
 
     private let loggedAction: () -> Void
-    var modelContext: ModelContext
     private let firestoreManager = FirestoreManager()
     private let authManager: AuthenticationManager
 
-    init(modelContext: ModelContext,authManager: AuthenticationManager = AuthenticationManager(),
-         loggedAction: @escaping () -> Void) {
-        self.modelContext = modelContext
+    init(authManager: AuthenticationManager = AuthenticationManager(), loggedAction: @escaping () -> Void) {
         self.authManager = authManager
         self.loggedAction = loggedAction
     }
 
-    func addAccount(completion: @escaping (Profile?) -> Void) {
+    func createAccount(completion: @escaping (Result<ProfileCodable, Error>) -> Void) {
         print("Entering addAccount")
         guard !accountExists(email: emailAdress, fullname: fullname) else {
             showAlert = true
             alertMessage = "Account with this email or full name already exists."
             print("Account already exists")
-            completion(nil)
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Account with this email or full name already exists."])))
             return
         }
 
@@ -39,7 +35,7 @@ class AccountViewModel: ObservableObject {
             showAlert = true
             alertMessage = "Invalid email address."
             print("Invalid email address")
-            completion(nil)
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid email address."])))
             return
         }
 
@@ -47,7 +43,7 @@ class AccountViewModel: ObservableObject {
             showAlert = true
             alertMessage = "Password must be at least 8 characters long, include uppercase and lowercase letters, a number, and a special character."
             print("Invalid password")
-            completion(nil)
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid password."])))
             return
         }
 
@@ -55,7 +51,7 @@ class AccountViewModel: ObservableObject {
             showAlert = true
             alertMessage = "Passwords do not match."
             print("Passwords do not match")
-            completion(nil)
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Passwords do not match."])))
             return
         }
 
@@ -63,7 +59,7 @@ class AccountViewModel: ObservableObject {
             showAlert = true
             alertMessage = "Full name can only contain letters."
             print("Invalid full name")
-            completion(nil)
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Full name can only contain letters."])))
             return
         }
 
@@ -71,7 +67,7 @@ class AccountViewModel: ObservableObject {
             showAlert = true
             alertMessage = "Invalid phone number. It must be between 10 and 15 characters long."
             print("Invalid phone number")
-            completion(nil)
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid phone number. It must be between 10 and 15 characters long."])))
             return
         }
 
@@ -83,57 +79,45 @@ class AccountViewModel: ObservableObject {
                 self.showAlert = true
                 self.alertMessage = "Failed to create account: \(error.localizedDescription)"
                 print("Sign up failed with error: \(error.localizedDescription)")
-                completion(nil)
+                completion(.failure(error))
                 return
             }
 
             print("Sign up successful, creating profile")
 
             // If sign up is successful, create profile in local database
-            let profile = Profile(emailAddress: self.emailAdress, password: self.password, fullName: self.fullname, phoneNumber: self.phone)
-            self.modelContext.insert(profile)
-            do {
-                try self.modelContext.save()
-                print("Profile saved to local database")
+            let profile = ProfileCodable(emailAddress: self.emailAdress, password: self.password, fullName: self.fullname, phoneNumber: self.phone)
 
-                // Save profile to Firestore
-                self.firestoreManager.saveProfileToFirestore(profile: profile) { error in
-                    if let error = error {
-                        self.showAlert = true
-                        self.alertMessage = "Failed to save profile to Firestore: \(error.localizedDescription)"
-                        print("Failed to save profile to Firestore: \(error.localizedDescription)")
-                        completion(nil)
-                        return
-                    }
-
-                    print("Profile saved to Firestore")
-
-                    // Log Firebase Analytics event for account creation
-                    Analytics.logEvent("create_account", parameters: [
-                        "email": self.emailAdress,
-                        "full_name": self.fullname,
-                        "phone": self.phone
-                    ])
-
-                    Analytics.logEvent(AnalyticsEventSignUp, parameters: [
-                        "email": self.emailAdress,
-                        "full_name": self.fullname,
-                        "phone": self.phone
-                    ])
-
-                    self.loggedAction()
-                    completion(profile)
+            // Save profile to Firestore
+            self.firestoreManager.saveProfileToFirestore(profile: profile) { error in
+                if let error = error {
+                    self.showAlert = true
+                    self.alertMessage = "Failed to save profile to Firestore: \(error.localizedDescription)"
+                    print("Failed to save profile to Firestore: \(error.localizedDescription)")
+                    completion(.failure(error))
+                    return
                 }
 
-            } catch {
-                self.showAlert = true
-                self.alertMessage = "Failed to save after the insert in the database."
-                print("Failed to save after insert in the database")
-                completion(nil)
+                print("Profile saved to Firestore")
+
+                // Log Firebase Analytics event for account creation
+                Analytics.logEvent("create_account", parameters: [
+                    "email": self.emailAdress,
+                    "full_name": self.fullname,
+                    "phone": self.phone
+                ])
+
+                Analytics.logEvent(AnalyticsEventSignUp, parameters: [
+                    "email": self.emailAdress,
+                    "full_name": self.fullname,
+                    "phone": self.phone
+                ])
+
+                self.loggedAction()
+                completion(.success(profile))
             }
         }
     }
-
 
     private func accountExists(email: String, fullname: String) -> Bool {
         return accounts.contains { $0.emailAddress == email && $0.fullName == fullname }
@@ -171,15 +155,4 @@ class AccountViewModel: ObservableObject {
         return predicate.evaluate(with: phoneNumber)
     }
 }
-
-
-    /// Swift Data
-//    private func fetchData() {
-//        do {
-//            let descriptor = FetchDescriptor<Profile>(sortBy: [SortDescriptor(\.fullName)])
-//            accounts = try modelContext.fetch(descriptor)
-//        } catch {
-//            print("Fetch failed")
-//        }
-//    }
 

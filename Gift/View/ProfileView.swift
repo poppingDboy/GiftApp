@@ -1,11 +1,11 @@
 import SwiftUI
-import SwiftData
+import Firebase
 
 struct ProfileView: View {
     @ObservedObject var viewModel: ProfileViewModel
 
-    init(modelContext: ModelContext, profile: Profile) {
-        self._viewModel = ObservedObject(wrappedValue: ProfileViewModel(modelContext: modelContext, profile: profile))
+    init(firestore: Firestore, profileId: String) {
+        self._viewModel = ObservedObject(wrappedValue: ProfileViewModel(firestore: firestore, profileId: profileId))
     }
 
     var body: some View {
@@ -77,17 +77,15 @@ struct ProfileView: View {
         }
         .fullScreenCover(isPresented: $viewModel.isUserLoggedOut) {
             NavigationView {
-                LoginView(viewModel: LoginViewModel(modelContext: viewModel.modelContext, loggedAction: {}))
+                LoginView(viewModel: LoginViewModel(loggedAction: {}))
             }
         }
     }
 }
 
-
 #Preview {
-    let modelContainer = try! ModelContainer(for: Gift.self, ListGift.self, Profile.self)
-    let modelContext = modelContainer.mainContext
-    let profile = Profile(emailAddress: "test@exemple.com", password: "testtest", fullName: "test test", phoneNumber: "1234567890")
-    return ProfileView(modelContext: modelContext, profile: profile)
+    let firestore = Firestore.firestore()
+    let profileId = "testProfileId" // Use a valid profile ID for testing
+    return ProfileView(firestore: firestore, profileId: profileId)
 }
 

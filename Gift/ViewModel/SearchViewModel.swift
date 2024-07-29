@@ -1,124 +1,59 @@
 import Foundation
-import SwiftData
-import Firebase
+import FirebaseFirestore
 
 class SearchViewModel: ObservableObject {
-    @Published var listGifts: [ListGift] = []
-    var modelContext: ModelContext
-    var profileId: UUID
+    @Published var listGifts: [ListGiftCodable] = []
+    @Published var showAlert = false
+    @Published var alertMessage = ""
 
-    init(modelContext: ModelContext, profileId: UUID) {
-        self.modelContext = modelContext
+    let firestore: Firestore
+    let profileId: String
+
+    init(firestore: Firestore, profileId: String) {
+        self.firestore = firestore
         self.profileId = profileId
     }
 
     func fetchDataFromFirestore() {
-        guard let user = Auth.auth().currentUser else {
-            return
-        }
+        // Fetch all lists from Firestore
+        let listsRef = firestore.collection("listGifts")
 
-        let db = Firestore.firestore()
-        db.collection("listGifts")
-            .whereField("profileId", isEqualTo: user.uid)
-            .getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error fetching documents: \(error)")
-                    Analytics.logEvent("fetch_data_failure", parameters: nil)
-                    return
-                }
+        listsRef.getDocuments { [weak self] snapshot, error in
+            guard let self = self else { return }
 
-                if let querySnapshot = querySnapshot {
-                    self.listGifts = querySnapshot.documents.compactMap { document in
-                        // Convertir les données du document en ListGiftCodable
-                        if let codable = try? document.data(as: ListGiftCodable.self) {
-                            // Convertir ListGiftCodable en ListGift
-                            return ListGift(from: codable)
-                        }
-                        return nil
-                    }
-
-                    // Log Firebase Analytics event for successful data fetch
-                    Analytics.logEvent("fetch_data_success", parameters: [
-                        "item_count": self.listGifts.count
-                    ])
-                }
+            if let error = error {
+                self.showAlert = true
+                self.alertMessage = "Error fetching lists: \(error.localizedDescription)"
+                print("Error fetching lists: \(error)")
+                return
             }
+
+            self.listGifts = snapshot?.documents.compactMap { document in
+                try? document.data(as: ListGiftCodable.self)
+            } ?? []
+        }
     }
 
     func searchListByIdFromFirestore(id: UUID) {
-        let db = Firestore.firestore()
-        db.collection("listGifts")
-            .whereField("id", isEqualTo: id.uuidString)
-//            .whereField("profileId", isEqualTo: profileId.uuidString)
-            .getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Search by ID failed: \(error)")
-                    Analytics.logEvent("search_list_by_id_failure", parameters: [
-                        "searched_id": id.uuidString
-                    ])
-                    return
-                }
+        let listRef = firestore.collection("listGifts").document(id.uuidString)
 
-                if let querySnapshot = querySnapshot {
-                    self.listGifts = querySnapshot.documents.compactMap { document in
-                        // Convertir les données du document en ListGiftCodable
-                        if let codable = try? document.data(as: ListGiftCodable.self) {
-                            // Convertir ListGiftCodable en ListGift
-                            return ListGift(from: codable)
-                        }
-                        return nil
-                    }
+        listRef.getDocument { [weak self] document, error in
+            guard let self = self else { return }
 
-                    // Log Firebase Analytics event for successful search
-                    Analytics.logEvent("search_list_by_id_success", parameters: [
-                        "searched_id": id.uuidString,
-                        "result_count": self.listGifts.count
-                    ])
-                }
+            if let error = error {
+                self.showAlert = true
+                self.alertMessage = "Error searching list: \(error.localizedDescription)"
+                print("Error searching list: \(error)")
+                return
             }
+
+            if let document = document, document.exists, let listGift = try? document.data(as: ListGiftCodable.self) {
+                self.listGifts = [listGift]
+            } else {
+                self.showAlert = true
+                self.alertMessage = "List not found."
+            }
+        }
     }
 }
 
-
-
-
-
-//func fetchData() {
-//    do {
-//        let descriptor = FetchDescriptor<ListGift>(predicate: #Predicate { $0.profileId == profileId }, sortBy: [SortDescriptor(\.name)])
-//        listGifts = try modelContext.fetch(descriptor)
-//
-//        // Log Firebase Analytics event for successful data fetch
-//        Analytics.logEvent("fetch_data_success", parameters: [
-//            "item_count": listGifts.count
-//        ])
-//
-//    } catch {
-//        print("Fetch data from SearchViewModel failed")
-//
-//        // Log Firebase Analytics event for failed data fetch
-//        Analytics.logEvent("fetch_data_failure", parameters: nil)
-//    }
-//}
-//
-//func searchListById(id: UUID) {
-//    do {
-//        let descriptor = FetchDescriptor<ListGift>(predicate: #Predicate { $0.id == id && $0.profileId == profileId })
-//        let results = try modelContext.fetch(descriptor)
-//        listGifts = results
-//
-//        // Log Firebase Analytics event for successful search
-//        Analytics.logEvent("search_list_by_id_success", parameters: [
-//            "searched_id": id.uuidString,
-//            "result_count": results.count
-//        ])
-//
-//    } catch {
-//        print("Search by ID failed")
-//
-//        // Log Firebase Analytics event for failed search
-//        Analytics.logEvent("search_list_by_id_failure", parameters: [
-//            "searched_id": id.uuidString
-//        ])
-//    }
-//}

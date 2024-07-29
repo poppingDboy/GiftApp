@@ -1,14 +1,13 @@
 import SwiftUI
-import SwiftData
-import Firebase
+import FirebaseFirestore
 
 struct SearchView: View {
     @State private var searchText = ""
     @StateObject var viewModel: SearchViewModel
 
-    init(searchText: String = "", modelContext: ModelContext, profileId: UUID) {
+    init(searchText: String = "", firestore: Firestore, profileId: String) {
         self.searchText = searchText
-        self._viewModel = StateObject(wrappedValue: SearchViewModel(modelContext: modelContext, profileId: profileId))
+        self._viewModel = StateObject(wrappedValue: SearchViewModel(firestore: firestore, profileId: profileId))
     }
 
     var body: some View {
@@ -49,7 +48,7 @@ struct SearchView: View {
                                 .padding()
                         } else {
                             List(viewModel.listGifts, id: \.id) { list in
-                                NavigationLink(destination: DetailListView(modelContext: viewModel.modelContext, listGift: list)) {
+                                NavigationLink(destination: DetailListView(firestore: viewModel.firestore, listGift: list)) {
                                     ListRow(list: list)
                                 }
                             }
@@ -64,7 +63,7 @@ struct SearchView: View {
 
                     HStack {
                         Spacer()
-                        NavigationLink(destination: CreateListView(modelContext: viewModel.modelContext, onAdd: viewModel.fetchDataFromFirestore)) {
+                        NavigationLink(destination: CreateListView(firestore: viewModel.firestore, onAdd: viewModel.fetchDataFromFirestore)) {
                             Text("New list")
                                 .font(.headline)
                                 .foregroundColor(.white)
@@ -83,14 +82,13 @@ struct SearchView: View {
 }
 
 #Preview {
-    let modelContainer = try! ModelContainer(for: Gift.self, ListGift.self, Profile.self)
-    let modelContext = modelContainer.mainContext
-    let profileId = UUID() // Use a valid UUID here for testing
-    return SearchView(modelContext: modelContext, profileId: profileId)
+    let firestore = Firestore.firestore()
+    let profileId = UUID().uuidString // Use a valid UUID string for testing
+    return SearchView(firestore: firestore, profileId: profileId)
 }
 
 struct ListRow: View {
-    let list: ListGift
+    let list: ListGiftCodable
 
     var body: some View {
         HStack {

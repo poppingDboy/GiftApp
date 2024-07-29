@@ -1,97 +1,45 @@
 import Foundation
-import SwiftData
-import Firebase
+import FirebaseFirestore
 
 class DetailGiftViewModel: ObservableObject {
-    @Published var gift: Gift
+    @Published var gift: GiftCodable
     @Published var showAlert = false
-    @Published var alertMessage = ""
-    var modelContext: ModelContext
+    @Published var alertMessage: String = ""
 
-    init(gift: Gift, modelContext: ModelContext) {
+    private let firestore: Firestore
+    private let listGift: ListGiftCodable
+
+    init(firestore: Firestore, gift: GiftCodable, listGift: ListGiftCodable) {
+        self.firestore = firestore
         self.gift = gift
-        self.modelContext = modelContext
+        self.listGift = listGift
     }
 
-    func fetchListGiftDetails(listGiftId: UUID) {
-        // Fetch the details of the list gift by ID
-        // This is a placeholder for the actual fetching logic
-        // You need to implement the fetching from your data source (e.g., CoreData, API)
+    func fetchGiftDetails() {
+        // Fetch gift details from Firestore if needed
     }
 
-    func removeGift(gift: Gift, from listGift: ListGift) {
-        if gift.purchased {
-            showAlert = true
-            alertMessage = "Cannot delete a purchased gift."
-
-            // Log Firebase Analytics event for attempting to delete a purchased gift
-            Analytics.logEvent("remove_gift_failure", parameters: [
-                "gift_name": gift.name,
-                "error": "Cannot delete a purchased gift."
-            ])
-            return
-        }
-
-        do {
-            // Remove the gift from the ListGift's gifts array
-            if let index = listGift.gifts.firstIndex(of: gift) {
-                listGift.gifts.remove(at: index)
+    func removeGift() {
+        firestore.collection("listGifts").document(listGift.id.uuidString).collection("gifts").document(gift.id.uuidString).delete() { error in
+            if let error = error {
+                self.alertMessage = "Failed to delete gift: \(error.localizedDescription)"
+                self.showAlert = true
             } else {
-                showAlert = true
-                alertMessage = "Gift not found in the list."
-
-                // Log Firebase Analytics event for gift not found
-                Analytics.logEvent("remove_gift_failure", parameters: [
-                    "gift_name": gift.name,
-                    "error": "Gift not found in the list."
-                ])
-                return
+                self.alertMessage = "Gift deleted successfully."
+                self.showAlert = true
             }
-
-            // Delete the gift from the model context
-            modelContext.delete(gift)
-
-            // Save the changes to the model context
-            try modelContext.save()
-
-            // Log Firebase Analytics event for successful deletion
-            Analytics.logEvent("remove_gift_success", parameters: [
-                "gift_name": gift.name,
-                "list_id": listGift.id.uuidString
-            ])
-
-        } catch {
-            showAlert = true
-            alertMessage = "Failed to delete the gift from the database."
-
-            // Log Firebase Analytics event for save failure
-            Analytics.logEvent("remove_gift_failure", parameters: [
-                "gift_name": gift.name,
-                "error": "Failed to delete gift from database."
-            ])
         }
     }
 
-    func purchased() {
-        do {
-            gift.purchased.toggle()
-            try modelContext.save()
-
-            // Log Firebase Analytics event for successful purchase status update
-            Analytics.logEvent("update_purchase_status_success", parameters: [
-                "gift_name": gift.name,
-                "purchased": gift.purchased
-            ])
-
-        } catch {
-            showAlert = true
-            alertMessage = "Failed to update the purchase status."
-
-            // Log Firebase Analytics event for failed purchase status update
-            Analytics.logEvent("update_purchase_status_failure", parameters: [
-                "gift_name": gift.name,
-                "error": "Failed to save purchase status."
-            ])
+    func markAsPurchased() {
+        firestore.collection("listGifts").document(listGift.id.uuidString).collection("gifts").document(gift.id.uuidString).updateData(["purchased": true]) { error in
+            if let error = error {
+                self.alertMessage = "Failed to mark gift as purchased: \(error.localizedDescription)"
+                self.showAlert = true
+            } else {
+                self.alertMessage = "Gift marked as purchased."
+                self.showAlert = true
+            }
         }
     }
 }

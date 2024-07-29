@@ -1,18 +1,17 @@
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
 
 struct DetailGiftView: View {
-    var gift: Gift
+    var gift: GiftCodable
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) private var modelContext
     @StateObject var viewModelGift: DetailGiftViewModel
     var backgroundImage: URL?
-    var listGift: ListGift
+    var listGift: ListGiftCodable
 
-    init(modelContext: ModelContext, gift: Gift, listGift: ListGift) {
+    init(firestore: Firestore, gift: GiftCodable, listGift: ListGiftCodable) {
         self.gift = gift
         self.listGift = listGift
-        _viewModelGift = StateObject(wrappedValue: DetailGiftViewModel(gift: gift, modelContext: modelContext))
+        _viewModelGift = StateObject(wrappedValue: DetailGiftViewModel(firestore: firestore, gift: gift, listGift: listGift))
     }
 
     var body: some View {
@@ -109,7 +108,7 @@ struct DetailGiftView: View {
                 Spacer()
 
                 Button(action: {
-                    viewModelGift.removeGift(gift: gift, from: listGift)
+                    viewModelGift.removeGift()
                     dismiss()
                 }) {
                     Text("Delete gift")
@@ -123,7 +122,7 @@ struct DetailGiftView: View {
                 .padding(.trailing)
 
                 Button(action: {
-                    viewModelGift.purchased()
+                    viewModelGift.markAsPurchased()
                 }) {
                     Text("Purchased")
                         .font(.headline)
@@ -141,7 +140,7 @@ struct DetailGiftView: View {
             Alert(title: Text("Error"), message: Text(viewModelGift.alertMessage), dismissButton: .default(Text("OK")))
         }
         .onAppear {
-            viewModelGift.fetchListGiftDetails(listGiftId: listGift.id)
+            viewModelGift.fetchGiftDetails()
         }
     }
 }

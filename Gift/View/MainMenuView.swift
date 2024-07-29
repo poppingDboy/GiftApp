@@ -1,13 +1,15 @@
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
+import FirebaseAuth
 
 struct MainMenuView: View {
     @State private var selectedTab = 0
-    let modelContext: ModelContext
-    let profile: Profile
+    let profile: ProfileCodable
+    let firestore: Firestore
+    let auth: Auth
 
     @MainActor
-    init(modelContext: ModelContext, profile: Profile) {
+    init(profile: ProfileCodable) {
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.stackedLayoutAppearance.selected.iconColor = UIColor(Color("redPastel"))
         tabBarAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(Color("redPastel"))]
@@ -17,14 +19,15 @@ struct MainMenuView: View {
             UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
         }
 
-        self.modelContext = modelContext
         self.profile = profile
+        self.firestore = Firestore.firestore()
+        self.auth = Auth.auth()
     }
 
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationView {
-                SearchView(modelContext: modelContext, profileId: profile.id)
+                SearchView(firestore: firestore, profileId: profile.id.uuidString)
             }
             .tabItem {
                 Label {
@@ -36,7 +39,7 @@ struct MainMenuView: View {
             .tag(0)
 
             NavigationView {
-                ProfileView(modelContext: modelContext, profile: profile)
+                ProfileView(firestore: firestore, profileId: profile.id.uuidString)
             }
             .tabItem {
                 Label {
@@ -52,9 +55,7 @@ struct MainMenuView: View {
 }
 
 #Preview {
-    let modelContainer = try! ModelContainer(for: Gift.self, ListGift.self, Profile.self)
-    let modelContext = modelContainer.mainContext
-    let profile = Profile(emailAddress: "test@exemple.com", password: "testtest", fullName: "test test", phoneNumber: "1234567890")
-    return MainMenuView(modelContext: modelContext, profile: profile)
+    let profile = ProfileCodable(emailAddress: "test@example.com", password: "testtest", fullName: "Test Test", phoneNumber: "1234567890")
+    return MainMenuView(profile: profile)
 }
 

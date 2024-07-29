@@ -1,15 +1,14 @@
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
 
 struct CreateListView: View {
     @ObservedObject var viewModelList: ListViewModel
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) private var modelContext
 
     var onAdd: (() -> Void)?
 
-    init(modelContext: ModelContext, onAdd: (() -> Void)? = nil) {
-        _viewModelList = ObservedObject(wrappedValue: ListViewModel(modelContext: modelContext))
+    init(firestore: Firestore, onAdd: (() -> Void)? = nil) {
+        _viewModelList = ObservedObject(wrappedValue: ListViewModel(firestore: firestore))
         self.onAdd = onAdd
     }
 
@@ -82,57 +81,6 @@ struct CreateListView: View {
 }
 
 #Preview {
-    CreateListView(modelContext: try! ModelContainer(for: Gift.self, ListGift.self, Profile.self).mainContext)
+    CreateListView(firestore: Firestore.firestore())
 }
 
-
-
-
-
-
-
-
-
-
-
-/// liste en detail
-/// /// a retirer
-//                Spacer()
-
-//                if viewModelGift.gifts.isEmpty {
-//                    Spacer()
-//                    Text("No gift to display")
-//                        .font(.title)
-//                        .foregroundColor(Color("grayText"))
-//                        .padding()
-//                    Spacer()
-//                }
-// rajouter un else pour afficher avec un foreach les lists de cadeaux
-
-
-//Text("Choose the background colour :")
-//    .font(.headline)
-//    .foregroundColor(Color("grayText"))
-//    .padding(.top, 10)
-//    .padding(.leading, 14)
-//
-//VStack(spacing: 18) {
-//    ForEach(0..<2, id: \.self) { rowIndex in
-//        HStack(spacing: 28) {
-//            ForEach(viewModelList.colors[rowIndex*5..<min((rowIndex+1)*5, viewModelList.colors.count)], id: \.self) { color in
-//                Circle()
-//                    .fill(color)
-//                    .frame(width: 30, height: 30)
-//                    .onTapGesture {
-//                        viewModelList.selectedColor = color
-//                    }
-//                    .overlay(
-//                        Circle()
-//                            .stroke(Color.red, lineWidth: viewModelList.selectedColor == color ? 3 : 0)
-//                    )
-//            }
-//        }
-//    }
-//}
-//.padding(.bottom, 20)
-//.padding(.leading, 14)

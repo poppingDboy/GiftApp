@@ -1,8 +1,5 @@
 import SwiftUI
 import Firebase
-import FirebaseCrashlytics
-import FirebaseCore
-import FirebaseFirestore
 import FirebaseAuth
 
 struct LoginView: View {
@@ -44,7 +41,7 @@ struct LoginView: View {
                     }
                     .padding(.top, -10)
 
-                    NavigationLink(destination: AccountCreateView(viewModel: AccountViewModel(modelContext: viewModel.modelContext, loggedAction: {}))) {
+                    NavigationLink(destination: AccountCreateView(viewModel: AccountViewModel(loggedAction: {}))) {
                         Text("Create an account?")
                             .foregroundColor(Color("bluePastel"))
                             .italic()
@@ -62,3 +59,4 @@ struct LoginView: View {
         }
     }
 }
+

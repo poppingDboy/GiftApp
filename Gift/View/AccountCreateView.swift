@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftData
+import FirebaseAuth
 
 struct CustomTextField: View {
     var placeholder: String
@@ -60,7 +60,7 @@ struct CustomSecureField: View {
 struct AccountCreateView: View {
     @ObservedObject var viewModel: AccountViewModel
     @State private var navigateToMainMenu = false
-    @State private var createdProfile: Profile?
+    @State private var createdProfile: ProfileCodable?
 
     var body: some View {
         ZStack {
@@ -85,10 +85,14 @@ struct AccountCreateView: View {
                 HStack {
                     Spacer()
                     Button(action: {
-                        viewModel.addAccount { profile in
-                            if let profile = profile {
+                        viewModel.createAccount { result in
+                            switch result {
+                            case .success(let profile):
                                 createdProfile = profile
                                 navigateToMainMenu = true
+                            case .failure(let error):
+                                viewModel.showAlert = true
+                                viewModel.alertMessage = error.localizedDescription
                             }
                         }
                     }) {
@@ -111,7 +115,7 @@ struct AccountCreateView: View {
             }
 
             if let profile = createdProfile {
-                NavigationLink(destination: MainMenuView(modelContext: viewModel.modelContext, profile: profile), isActive: $navigateToMainMenu) {
+                NavigationLink(destination: MainMenuView(profile: profile), isActive: $navigateToMainMenu) {
                     EmptyView()
                 }
             }
@@ -120,10 +124,6 @@ struct AccountCreateView: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Gift.self as! any PersistentModel.Type, ListGift.self, Profile.self, configurations: config)
-    let authManager: AuthenticationManager
-
-    return AccountCreateView(viewModel: AccountViewModel(modelContext: container.mainContext, authManager: authManager, loggedAction: {}))
+    return AccountCreateView(viewModel: AccountViewModel(loggedAction: {}))
 }
 

@@ -1,5 +1,5 @@
 import SwiftUI
-import SwiftData
+import FirebaseFirestore
 
 struct CreateGiftView: View {
     @StateObject var viewModelGift: GiftViewModel
@@ -7,10 +7,9 @@ struct CreateGiftView: View {
     let listId: String
 
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) private var modelContext
 
-    init(modelContext: ModelContext, viewModelDetail: DetailListViewModel) {
-        _viewModelGift = StateObject(wrappedValue: GiftViewModel(modelContext: modelContext, listGiftID: viewModelDetail.list.id.uuidString))
+    init(firestore: Firestore, viewModelDetail: DetailListViewModel) {
+        _viewModelGift = StateObject(wrappedValue: GiftViewModel(firestore: firestore, listGiftID: viewModelDetail.list.id.uuidString))
         self.viewModelDetail = viewModelDetail
         self.listId = viewModelDetail.list.id.uuidString
     }
@@ -49,10 +48,20 @@ struct CreateGiftView: View {
 
                         Button(action: {
                             if let priceValue = Double(viewModelGift.price) {
-                                viewModelGift.addGift(name: viewModelGift.name, price: priceValue, address: viewModelGift.address, url: viewModelGift.url?.absoluteString, listGiftID: listId)
-                            }
-                            if !viewModelGift.showAlert {
-                                dismiss()
+                                viewModelGift.addGift(
+                                    name: viewModelGift.name,
+                                    price: priceValue,
+                                    address: viewModelGift.address,
+                                    url: viewModelGift.url?.absoluteString,
+                                    completion: { success in
+                                        if success {
+                                            dismiss()
+                                        }
+                                    }
+                                )
+                            } else {
+                                viewModelGift.alertMessage = "Please enter a valid price."
+                                viewModelGift.showAlert = true
                             }
                         }) {
                             Text("Validate")
@@ -74,4 +83,10 @@ struct CreateGiftView: View {
     }
 }
 
+#Preview {
+    let firestore = Firestore.firestore()
+    let listId = "sampleListId" // Replace with a valid list ID
+    let viewModelDetail = DetailListViewModel(firestore: firestore, list: ListGiftCodable(id: UUID(), name: "Sample List", dateCreation: Date(), dateExpiration: Date(), profileId: "1"))
+    return CreateGiftView(firestore: firestore, viewModelDetail: viewModelDetail)
+}
 
