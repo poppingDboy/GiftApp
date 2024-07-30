@@ -18,14 +18,19 @@ class GiftViewModel: ObservableObject {
     }
 
     func addGift(name: String, price: Double, address: String?, url: String?, completion: @escaping (Bool) -> Void) {
+        let giftId = UUID().uuidString
+
         let giftData: [String: Any] = [
+            "id": giftId,
             "name": name,
             "price": price,
             "address": address ?? "",
-            "url": url ?? ""
+            "url": url ?? "",
+            "purchased": false,
+            "listGift": listGiftID
         ]
 
-        firestore.collection("listGifts").document(listGiftID).collection("gifts").addDocument(data: giftData) { error in
+        firestore.collection("gifts").document(giftId).setData(giftData) { error in
             if let error = error {
                 self.alertMessage = "Failed to add gift: \(error.localizedDescription)"
                 self.showAlert = true

@@ -6,7 +6,7 @@ struct GiftCodable: Codable, Identifiable {
     let name: String
     let price: Double
     let address: String?
-    let url: URL?
+    var url: String?
     var purchased: Bool
     let listGift: String
 }

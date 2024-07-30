@@ -70,6 +70,7 @@
 		E3EAD6782C507E2F00CC1EC0 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6772C507E2F00CC1EC0 /* DataManager.swift */; };
 		E3EAD67A2C51C1D800CC1EC0 /* ListGiftDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6792C51C1D800CC1EC0 /* ListGiftDataManager.swift */; };
 		E3EAD67D2C573DDD00CC1EC0 /* ListGiftError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD67C2C573DDD00CC1EC0 /* ListGiftError.swift */; };
+		E3EAD67F2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD67E2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +130,7 @@
 		E3EAD6772C507E2F00CC1EC0 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		E3EAD6792C51C1D800CC1EC0 /* ListGiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftDataManager.swift; sourceTree = "<group>"; };
 		E3EAD67C2C573DDD00CC1EC0 /* ListGiftError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftError.swift; sourceTree = "<group>"; };
+		E3EAD67E2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +238,7 @@
 			children = (
 				E334A48D2C1B36AA0034523E /* GiftTests.swift */,
 				E3EAD6662C45219100CC1EC0 /* LoginUseCaseTests.swift */,
+				E3EAD67E2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift */,
 			);
 			path = GiftTests;
 			sourceTree = "<group>";
@@ -550,6 +553,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3EAD67F2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift in Sources */,
 				E334A48E2C1B36AA0034523E /* GiftTests.swift in Sources */,
 				E3EAD6672C45219100CC1EC0 /* LoginUseCaseTests.swift in Sources */,
 			);

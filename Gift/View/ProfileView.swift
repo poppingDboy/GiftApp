@@ -77,7 +77,7 @@ struct ProfileView: View {
         }
         .fullScreenCover(isPresented: $viewModel.isUserLoggedOut) {
             NavigationView {
-                LoginView(viewModel: LoginViewModel(loggedAction: {}))
+                LoginView(viewModel: LoginViewModel(loggedAction: { _ in }))
             }
         }
     }

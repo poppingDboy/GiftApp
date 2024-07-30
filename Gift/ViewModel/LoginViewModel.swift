@@ -8,9 +8,10 @@ class LoginViewModel: ObservableObject {
     @Published var alertMessage = ""
     let authManager: AuthenticationManager
 
-    private let loggedAction: () -> Void
+    private let loggedAction: (ProfileCodable) -> Void
 
-    init(authManager: AuthenticationManager = AuthenticationManager(), loggedAction: @escaping () -> Void) {
+    /// appeler FirebaseAuthentication
+    init(authManager: AuthenticationManager = AuthenticationManager(), loggedAction: @escaping (ProfileCodable) -> Void) {
         self.authManager = authManager
         self.loggedAction = loggedAction
 
@@ -25,15 +26,66 @@ class LoginViewModel: ObservableObject {
     }
 
     func login() {
-        authManager.signIn(withEmail: emailAdress, password: password, loggedAction: { result in
-            switch result {
-            case .success(()):
-                self.loggedAction()
-            case .failure(let error):
-                self.alertMessage = "Error: \(error.localizedDescription)"
-                self.showAlert = true
+        let profilesRef = Firestore.firestore().collection("profiles")
+
+        // Debugging info
+        print("Attempting to log in with email: \(emailAdress) and password: \(password)")
+
+        profilesRef.whereField("emailAddress", isEqualTo: emailAdress)
+            .whereField("password", isEqualTo: password)
+            .getDocuments { (snapshot, error) in
+                if let error = error {
+                    // Error occurred during Firestore query
+                    print("Error searching for user: \(error.localizedDescription)")
+                    self.alertMessage = "Error searching for user: \(error.localizedDescription)"
+                    self.showAlert = true
+                } else {
+                    print("Firestore query completed successfully.")
+
+                    if let snapshot = snapshot {
+                        print("Number of documents found: \(snapshot.documents.count)")
+
+                        guard let document = snapshot.documents.first,
+                              let emailAddress = document.data()["emailAddress"] as? String,
+                              let password = document.data()["password"] as? String,
+                              let fullName = document.data()["fullName"] as? String,
+                              let phoneNumber = document.data()["phoneNumber"] as? String
+                        else {
+                            return
+                        }
+
+//                        for document in snapshot.documents {
+//                            print("Document ID: \(document.documentID)")
+//                            print("Document Data: \(document.data())")
+//                        }
+
+                        if !snapshot.isEmpty {
+                            print("User found, proceeding with authentication.")
+                            self.authManager.signIn(withEmail: self.emailAdress, password: self.password) { result in
+                                switch result {
+                                case .success(()):
+                                    self.loggedAction(ProfileCodable(
+                                        emailAddress: emailAddress,
+                                        password: password,
+                                        fullName: fullName,
+                                        phoneNumber: phoneNumber))
+                                case .failure(let error):
+                                    self.alertMessage = "Authentication Error: \(error.localizedDescription)"
+                                    self.showAlert = true
+                                }
+                            }
+                        } else {
+                            print("No matching user found in Firestore.")
+                            self.alertMessage = "Invalid email or password."
+                            self.showAlert = true
+                        }
+                    } else {
+                        print("Snapshot is nil.")
+                        self.alertMessage = "No matching user found in Firestore."
+                        self.showAlert = true
+                    }
+                }
             }
-        })
     }
 }
 

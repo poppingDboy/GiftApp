@@ -73,7 +73,7 @@ struct DetailGiftView: View {
                 }
 
                 if let url = gift.url {
-                    Text(url.absoluteString)
+                    Text(url)
                         .underline()
                         .font(.subheadline)
                         .foregroundColor(Color("darkBlue"))
@@ -138,9 +138,6 @@ struct DetailGiftView: View {
         }
         .alert(isPresented: $viewModelGift.showAlert) {
             Alert(title: Text("Error"), message: Text(viewModelGift.alertMessage), dismissButton: .default(Text("OK")))
-        }
-        .onAppear {
-            viewModelGift.fetchGiftDetails()
         }
     }
 }

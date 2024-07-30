@@ -19,41 +19,29 @@ class FirebaseAuthentication: Authentication {
     let db = Firestore.firestore()
     lazy var profilesCollection = db.collection("profiles")
 
-    func signIn(withEmail: String, password: String, loggedAction: @escaping (Result<Void, any Error>) -> Void) {
-        profilesCollection.whereField("emailAddress", isEqualTo: withEmail)
-            .whereField("password", isEqualTo: password)
-            .getDocuments { [weak self] querySnapshot, error in
-                guard self != nil else { return }
+    func signIn(withEmail: String, password: String, loggedAction: @escaping (Result<Void, Error>) -> Void) {
+        // Authentification Firebase Auth
+        Auth.auth().signIn(withEmail: withEmail, password: password) { [weak self] authResult, error in
+            if let error = error {
+                // Log Firebase Analytics event for failed authentication
+                Analytics.logEvent("authentication_failed", parameters: [
+                    "email": withEmail
+                ])
+                loggedAction(.failure(error))
+            } else if let _ = authResult?.user {
+                // Successful authentication
+                loggedAction(.success(()))
 
-                if let error = error {
-                    // Log Firebase Analytics event for failed account check
-                    Analytics.logEvent("Log_Firebase_Analytics_event_for_failed_account_check", parameters: [
-                        "email": withEmail
-                    ])
-                    loggedAction(.failure(error))
-                } else {
-                    guard let documents = querySnapshot?.documents, !documents.isEmpty else {
-                        // Log Firebase Analytics event for failed account check
-                        Analytics.logEvent("check_account_exist_failure", parameters: [
-                            "email": withEmail
-                        ])
-                        loggedAction(.failure(NetworkError.checkAccountExistFailure))
-                        return
-                    }
-
-                    // Successful login
-                    loggedAction(.success(()))
-
-                    // Log Firebase Analytics event for successful account check
-                    Analytics.logEvent("check_account_exist_success", parameters: [
-                        "email": withEmail
-                    ])
-
-                    Analytics.logEvent(AnalyticsEventLogin, parameters: [
-                        "email": withEmail
-                    ])
-                }
+                // Log Firebase Analytics event for successful authentication
+                Analytics.logEvent("authentication_success", parameters: [
+                    "email": withEmail
+                ])
+            } else {
+                // Handle any other cases
+                let unknownError = NSError(domain: "com.example.error", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown authentication error."])
+                loggedAction(.failure(unknownError))
             }
+        }
     }
 
     func signUp(email: String, password: String, completion: @escaping ((any Error)?) -> Void) {

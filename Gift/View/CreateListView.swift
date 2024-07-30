@@ -5,11 +5,8 @@ struct CreateListView: View {
     @ObservedObject var viewModelList: ListViewModel
     @Environment(\.dismiss) var dismiss
 
-    var onAdd: (() -> Void)?
-
     init(firestore: Firestore, onAdd: (() -> Void)? = nil) {
-        _viewModelList = ObservedObject(wrappedValue: ListViewModel(firestore: firestore))
-        self.onAdd = onAdd
+        _viewModelList = ObservedObject(wrappedValue: ListViewModel())
     }
 
     var body: some View {
@@ -53,12 +50,11 @@ struct CreateListView: View {
                     Spacer()
 
                     Button(action: {
-                        viewModelList.addListGift(name: viewModelList.listName, expirationDate: viewModelList.expirationDate) { error in
-                            if error == nil {
-                                onAdd?()
-                                dismiss()
-                            }
+                        viewModelList.addListGift(name: viewModelList.listName, expirationDate: viewModelList.expirationDate)
+                        if !viewModelList.showAlert {
+                            dismiss()
                         }
+
                     }) {
                         Text("Validate")
                             .font(.headline)

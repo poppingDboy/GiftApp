@@ -15,32 +15,93 @@ class DetailGiftViewModel: ObservableObject {
         self.listGift = listGift
     }
 
-    func fetchGiftDetails() {
-        // Fetch gift details from Firestore if needed
-    }
-
     func removeGift() {
-        firestore.collection("listGifts").document(listGift.id.uuidString).collection("gifts").document(gift.id.uuidString).delete() { error in
+        // Référence à la collection `gifts`
+        let giftsRef = firestore.collection("gifts")
+
+        // Filtrer les documents où le champ `name` correspond au nom du cadeau
+        let query = giftsRef.whereField("name", isEqualTo: gift.name)
+
+        // Exécuter la requête
+        query.getDocuments { (snapshot, error) in
             if let error = error {
-                self.alertMessage = "Failed to delete gift: \(error.localizedDescription)"
+                self.alertMessage = "Failed to search for gift: \(error.localizedDescription)"
                 self.showAlert = true
+                print("Error searching for gift: \(error.localizedDescription)")
+            } else if let snapshot = snapshot {
+                // Vérifier s'il y a des documents correspondant
+                if snapshot.documents.isEmpty {
+                    self.alertMessage = "No gift found with name \(self.gift.name)"
+                    self.showAlert = true
+                } else {
+                    // Traitement du premier document trouvé (ou ajuster pour plusieurs documents si nécessaire)
+                    if let document = snapshot.documents.first {
+                        // Supprimer le document
+                        document.reference.delete() { error in
+                            if let error = error {
+                                self.alertMessage = "Failed to delete gift: \(error.localizedDescription)"
+                                self.showAlert = true
+                            } else {
+                                self.alertMessage = "Gift deleted successfully."
+                                self.showAlert = true
+                            }
+                        }
+                    }
+                }
             } else {
-                self.alertMessage = "Gift deleted successfully."
+                self.alertMessage = "Snapshot is nil"
                 self.showAlert = true
             }
         }
     }
+
 
     func markAsPurchased() {
-        firestore.collection("listGifts").document(listGift.id.uuidString).collection("gifts").document(gift.id.uuidString).updateData(["purchased": true]) { error in
+        // Référence à la collection `gifts`
+        let giftsRef = firestore.collection("gifts")
+
+        // Filtrer les documents où le champ `name` correspond au nom du cadeau
+        let query = giftsRef.whereField("name", isEqualTo: gift.name)
+
+        // Exécuter la requête
+        query.getDocuments { (snapshot, error) in
             if let error = error {
-                self.alertMessage = "Failed to mark gift as purchased: \(error.localizedDescription)"
+                self.alertMessage = "Failed to search for gift: \(error.localizedDescription)"
                 self.showAlert = true
+                print("Error searching for gift: \(error.localizedDescription)")
+            } else if let snapshot = snapshot {
+                // Vérifier s'il y a des documents correspondant
+                if snapshot.documents.isEmpty {
+                    self.alertMessage = "No gift found with name \(self.gift.name)"
+                    self.showAlert = true
+                } else {
+                    // Traitement du premier document trouvé (ou ajuster pour plusieurs documents si nécessaire)
+                    if let document = snapshot.documents.first {
+                        // Lire la valeur actuelle du champ `purchased`
+                        let currentPurchasedValue = document.data()["purchased"] as? Bool ?? false
+                        
+                        // Inverser la valeur de `purchased`
+                        let newPurchasedValue = !currentPurchasedValue
+
+                        // Mettre à jour le document avec la nouvelle valeur
+                        document.reference.updateData(["purchased": newPurchasedValue]) { error in
+                            if let error = error {
+                                self.alertMessage = "Failed to update gift: \(error.localizedDescription)"
+                                self.showAlert = true
+                            } else {
+                                self.alertMessage = "Gift updated successfully."
+                                self.showAlert = true
+                            }
+                        }
+                    }
+                }
             } else {
-                self.alertMessage = "Gift marked as purchased."
+                self.alertMessage = "Snapshot is nil"
                 self.showAlert = true
             }
         }
     }
+
+
 }
 

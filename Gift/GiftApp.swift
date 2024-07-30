@@ -7,18 +7,22 @@ import FirebaseCore
 struct GiftApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State var isUserNotLogged: Bool = true
+    @State var profile: ProfileCodable?
 
     var body: some Scene {
         WindowGroup {
-            LoginView(viewModel: LoginViewModel(loggedAction: {
-                isUserNotLogged = false
-            }))
+            if isUserNotLogged {
+                LoginView(viewModel: LoginViewModel(loggedAction: { logprofile in
+                    isUserNotLogged = false
+                    profile = logprofile
+                }))
+            } else if let profile {
+                MainMenuView(profile: profile)
+            }
+
+
         }
     }
-
-//    init() {
-//        FirebaseApp.configure()
-//    }
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
