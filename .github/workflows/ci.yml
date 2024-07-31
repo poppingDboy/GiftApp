@@ -26,14 +26,17 @@ jobs:
           # Decode the base64-encoded certificate
           echo "${{ secrets.CERTIFICATE_BASE64 }}" | base64 --decode > certificate.p12
 
-          # Import the certificate into the keychain
+          # Create and unlock a keychain
           security create-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
-          security import certificate.p12 -k build.keychain -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A
-          
-          # Make sure the keychain is unlocked and set it as the default
-          security list-keychains -d user -s build.keychain
           security unlock-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
+
+          # Import the certificate into the keychain
+          security import certificate.p12 -k build.keychain -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A
+
+          # Set the keychain as the default
+          security list-keychains -d user -s build.keychain
+          security default-keychain -s build.keychain
 
       - name: Build and test
         run: |
-          xcodebuild -scheme Gift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' clean test
+          xcodebuild -scheme Gift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' clean test -allowProvisioningUpdates
