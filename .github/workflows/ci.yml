@@ -26,12 +26,19 @@ jobs:
           # Decode the base64-encoded certificate
           echo "${{ secrets.CERTIFICATE_BASE64 }}" | base64 --decode > certificate.p12
 
+          # Decode the base64-encoded provisioning profile
+          echo "${{ secrets.PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > provisioning_profile.mobileprovision
+
           # Create and unlock a keychain
           security create-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
           security unlock-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
 
           # Import the certificate into the keychain
           security import certificate.p12 -k build.keychain -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A
+
+          # Import the provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp provisioning_profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
           # Set the keychain as the default
           security list-keychains -d user -s build.keychain
