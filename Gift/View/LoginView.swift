@@ -41,7 +41,7 @@ struct LoginView: View {
                     }
                     .padding(.top, -10)
 
-                    NavigationLink(destination: AccountCreateView(viewModel: AccountViewModel(loggedAction: {}))) {
+                    NavigationLink(destination: AccountCreateView(viewModel: AccountViewModel(accountRepo: AccountRepositoryFirebase(), loggedAction: {}))) {
                         Text("Create an account?")
                             .foregroundColor(Color("bluePastel"))
                             .italic()

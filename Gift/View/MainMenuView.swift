@@ -27,7 +27,7 @@ struct MainMenuView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationView {
-                SearchView(firestore: firestore, profileId: profile.id.uuidString)
+                SearchView(profileId: profile.id)
             }
             .tabItem {
                 Label {
@@ -39,7 +39,7 @@ struct MainMenuView: View {
             .tag(0)
 
             NavigationView {
-                ProfileView(firestore: firestore, profileId: profile.id.uuidString)
+                ProfileView(profileId: profile.id)
             }
             .tabItem {
                 Label {
@@ -55,7 +55,7 @@ struct MainMenuView: View {
 }
 
 #Preview {
-    let profile = ProfileCodable(emailAddress: "test@example.com", password: "testtest", fullName: "Test Test", phoneNumber: "1234567890")
+    let profile = ProfileCodable(id: UUID().uuidString, emailAddress: "test@example.com", password: "testtest", fullName: "Test Test", phoneNumber: "1234567890")
     return MainMenuView(profile: profile)
 }
 

@@ -4,13 +4,12 @@ import Firebase
 struct ProfileView: View {
     @ObservedObject var viewModel: ProfileViewModel
 
-    init(firestore: Firestore, profileId: String) {
-        self._viewModel = ObservedObject(wrappedValue: ProfileViewModel(firestore: firestore, profileId: profileId))
+    init(profileRepo: ProfileRepositoryInterface = ProfileRepositoryFirebase(), profileId: String) {
+        self._viewModel = ObservedObject(wrappedValue: ProfileViewModel(profileRepo: profileRepo, profileId: profileId))
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Profile information
             HStack {
                 Text("Email address: ")
                     .font(.headline)
@@ -49,7 +48,6 @@ struct ProfileView: View {
 
             Spacer()
 
-            // Disconnect button
             HStack {
                 Spacer()
 
@@ -77,15 +75,8 @@ struct ProfileView: View {
         }
         .fullScreenCover(isPresented: $viewModel.isUserLoggedOut) {
             NavigationView {
-                LoginView(viewModel: LoginViewModel(loggedAction: { _ in }))
+                LoginView(viewModel: LoginViewModel(loginRepo: LoginRepositoryFirebase(), loggedAction: { _ in }))
             }
         }
     }
 }
-
-#Preview {
-    let firestore = Firestore.firestore()
-    let profileId = "testProfileId" // Use a valid profile ID for testing
-    return ProfileView(firestore: firestore, profileId: profileId)
-}
-

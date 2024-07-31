@@ -7,11 +7,13 @@ struct DetailGiftView: View {
     @StateObject var viewModelGift: DetailGiftViewModel
     var backgroundImage: URL?
     var listGift: ListGiftCodable
+    private let giftRepo: GiftRepositoryInterface
 
-    init(firestore: Firestore, gift: GiftCodable, listGift: ListGiftCodable) {
+    init(giftRepo: GiftRepositoryInterface = GiftRepositoryFirebase(), gift: GiftCodable, listGift: ListGiftCodable) {
         self.gift = gift
         self.listGift = listGift
-        _viewModelGift = StateObject(wrappedValue: DetailGiftViewModel(firestore: firestore, gift: gift, listGift: listGift))
+        self.giftRepo = giftRepo
+        _viewModelGift = StateObject(wrappedValue: DetailGiftViewModel(giftRepo: giftRepo, gift: gift, listGift: listGift))
     }
 
     var body: some View {

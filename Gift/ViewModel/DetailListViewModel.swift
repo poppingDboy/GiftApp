@@ -2,6 +2,7 @@ import Foundation
 import FirebaseFirestore
 
 class DetailListViewModel: ObservableObject {
+    // Published properties to trigger UI updates
     @Published var list: ListGiftCodable
     @Published var giftsToPurchase: [GiftCodable] = []
     @Published var purchasedGifts: [GiftCodable] = []
@@ -9,81 +10,49 @@ class DetailListViewModel: ObservableObject {
     @Published var alertMessage: String = ""
     @Published var shareText: String = ""
 
-    let firestore: Firestore
+    // Repository interface for interacting with the data source
+    let giftRepo: ListGiftRepositoryInterface
 
-    init(firestore: Firestore, list: ListGiftCodable) {
-        self.firestore = firestore
+    // Initializer for DetailListViewModel
+    init(giftRepo: ListGiftRepositoryInterface = ListGiftRepositoryFirebase(), list: ListGiftCodable) {
+        self.giftRepo = giftRepo
         self.list = list
         self.fetchGifts()
     }
 
+    // Function to fetch gifts associated with the list
     func fetchGifts() {
-        let giftsRef = firestore.collection("gifts")
-
-        // Filtrer les documents où le champ `listGift` correspond à l'ID de la liste
-        let query = giftsRef.whereField("listGift", isEqualTo: list.id.uuidString)
-
-        print("Fetching gifts for list ID: \(list.id.uuidString)")
-
-        query.getDocuments { (snapshot, error) in
-            if let error = error {
-                self.alertMessage = "Failed to fetch gifts: \(error.localizedDescription)"
+        // Call the repository method to fetch gifts
+        giftRepo.fetchGifts(listId: list.id.uuidString) { result in
+            switch result {
+            case .success(let (giftsToPurchase, purchasedGifts)):
+                // Update the properties with fetched data
+                self.giftsToPurchase = giftsToPurchase
+                self.purchasedGifts = purchasedGifts
+            case .failure(let error):
+                // Set alert message and show alert if fetching fails
+                self.alertMessage = "Failed to fetch gifts"
                 self.showAlert = true
-                print("Error fetching gifts: \(error.localizedDescription)")
-            } else if let snapshot = snapshot {
-                let documentCount = snapshot.documents.count
-                print("Snapshot count: \(documentCount)")
-
-                if documentCount == 0 {
-                    print("No documents found matching the criteria.")
-                } else {
-                    self.giftsToPurchase = []
-                    self.purchasedGifts = []
-
-                    for document in snapshot.documents {
-                        print("Document data: \(document.data())") // Affiche les données du document pour le débogage
-
-                        do {
-                            var gift = try document.data(as: GiftCodable.self)
-
-                            // Assurez-vous que la conversion de chaîne à URL est correcte si nécessaire
-                            if let urlString = document.data()["url"] as? String {
-                                gift.url = urlString // Conserve l'url comme String
-                            }
-
-                            if gift.purchased {
-                                self.purchasedGifts.append(gift)
-                            } else {
-                                self.giftsToPurchase.append(gift)
-                            }
-                        } catch {
-                            print("Error decoding document: \(error.localizedDescription)")
-                        }
-                    }
-
-                    print("Gifts to purchase: \(self.giftsToPurchase.count)")
-                    print("Purchased gifts: \(self.purchasedGifts.count)")
-                }
-            } else {
-                print("Snapshot is nil")
             }
         }
     }
 
-
-    func removeListGift(completion: @escaping (Error?) -> Void) {
-        // Remove the list from Firestore
-        let listRef = firestore.collection("listGifts").document(list.id.uuidString)
-        listRef.delete { error in
-            if let error = error {
-                self.alertMessage = "Failed to delete list: \(error.localizedDescription)"
-                self.showAlert = true
-                completion(error)
-            } else {
-                self.alertMessage = "List deleted successfully."
-                self.showAlert = true
-                completion(nil)
+    // Function to remove the current list gift
+    func removeListGift() {
+        // Call the repository method to remove the list gift
+        giftRepo.removeListGift(listId: list.id.uuidString) { error in
+            if let error {
+                switch error {
+                case .deleteError:
+                    // Set alert message and show alert if deletion fails
+                    self.alertMessage = "Failed to delete list"
+                    self.showAlert = true
+                default:
+                    // Handle other errors if needed
+                    break
+                }
             }
         }
     }
 }
+

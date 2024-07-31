@@ -5,9 +5,9 @@ struct SearchView: View {
     @State private var searchText = ""
     @StateObject var viewModel: SearchViewModel
 
-    init(searchText: String = "", firestore: Firestore, profileId: String) {
+    init(searchText: String = "", profileId: String, searchRepo: SearchRepositoryInterface = SearchRepositoryFirebase()) {
         self.searchText = searchText
-        self._viewModel = StateObject(wrappedValue: SearchViewModel(firestore: firestore, profileId: profileId))
+        self._viewModel = StateObject(wrappedValue: SearchViewModel(searchRepo: searchRepo))
     }
 
     var body: some View {
@@ -48,7 +48,7 @@ struct SearchView: View {
                                 .padding()
                         } else {
                             List(viewModel.listGifts, id: \.id) { list in
-                                NavigationLink(destination: DetailListView(firestore: viewModel.firestore, listGift: list)) {
+                                NavigationLink(destination: DetailListView(listGift: list)) {
                                     ListRow(list: list)
                                 }
                             }
@@ -63,7 +63,7 @@ struct SearchView: View {
 
                     HStack {
                         Spacer()
-                        NavigationLink(destination: CreateListView(firestore: viewModel.firestore, onAdd: viewModel.fetchDataFromFirestore)) {
+                        NavigationLink(destination: CreateListView(firestore: Firestore.firestore())) {
                             Text("New list")
                                 .font(.headline)
                                 .foregroundColor(.white)
@@ -79,12 +79,6 @@ struct SearchView: View {
             }
         }
     }
-}
-
-#Preview {
-    let firestore = Firestore.firestore()
-    let profileId = UUID().uuidString // Use a valid UUID string for testing
-    return SearchView(firestore: firestore, profileId: profileId)
 }
 
 struct ListRow: View {

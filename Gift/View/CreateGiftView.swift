@@ -8,8 +8,8 @@ struct CreateGiftView: View {
 
     @Environment(\.dismiss) var dismiss
 
-    init(firestore: Firestore, viewModelDetail: DetailListViewModel) {
-        _viewModelGift = StateObject(wrappedValue: GiftViewModel(firestore: firestore, listGiftID: viewModelDetail.list.id.uuidString))
+    init(viewModelDetail: DetailListViewModel) {
+        _viewModelGift = StateObject(wrappedValue: GiftViewModel(listGiftID: viewModelDetail.list.id.uuidString))
         self.viewModelDetail = viewModelDetail
         self.listId = viewModelDetail.list.id.uuidString
     }
@@ -52,13 +52,9 @@ struct CreateGiftView: View {
                                     name: viewModelGift.name,
                                     price: priceValue,
                                     address: viewModelGift.address,
-                                    url: viewModelGift.url?.absoluteString,
-                                    completion: { success in
-                                        if success {
-                                            dismiss()
-                                        }
-                                    }
+                                    url: viewModelGift.url?.absoluteString
                                 )
+                                dismiss()
                             } else {
                                 viewModelGift.alertMessage = "Please enter a valid price."
                                 viewModelGift.showAlert = true
@@ -86,7 +82,7 @@ struct CreateGiftView: View {
 #Preview {
     let firestore = Firestore.firestore()
     let listId = "sampleListId" // Replace with a valid list ID
-    let viewModelDetail = DetailListViewModel(firestore: firestore, list: ListGiftCodable(id: UUID(), name: "Sample List", dateCreation: Date(), dateExpiration: Date(), profileId: "1"))
-    return CreateGiftView(firestore: firestore, viewModelDetail: viewModelDetail)
+    let viewModelDetail = DetailListViewModel(list: ListGiftCodable(id: UUID(), name: "Sample List", dateCreation: Date(), dateExpiration: Date(), profileId: "1"))
+    return CreateGiftView(viewModelDetail: viewModelDetail)
 }
 

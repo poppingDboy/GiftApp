@@ -9,37 +9,28 @@ class GiftViewModel: ObservableObject {
     @Published var showAlert = false
     @Published var alertMessage: String = ""
 
-    private let firestore: Firestore
+    private let giftRepo: GiftRepositoryInterface
     private let listGiftID: String
 
-    init(firestore: Firestore, listGiftID: String) {
-        self.firestore = firestore
+    init(giftRepo: GiftRepositoryInterface = GiftRepositoryFirebase(), listGiftID: String) {
+        self.giftRepo = giftRepo
         self.listGiftID = listGiftID
     }
 
-    func addGift(name: String, price: Double, address: String?, url: String?, completion: @escaping (Bool) -> Void) {
-        let giftId = UUID().uuidString
-
-        let giftData: [String: Any] = [
-            "id": giftId,
-            "name": name,
-            "price": price,
-            "address": address ?? "",
-            "url": url ?? "",
-            "purchased": false,
-            "listGift": listGiftID
-        ]
-
-        firestore.collection("gifts").document(giftId).setData(giftData) { error in
-            if let error = error {
-                self.alertMessage = "Failed to add gift: \(error.localizedDescription)"
-                self.showAlert = true
-                completion(false)
-            } else {
+    // Function to add a new gift to the list
+    func addGift(name: String, price: Double, address: String?, url: String?) {
+        // Call the repository method to add a gift
+        giftRepo.addGift(name: name, price: price, address: address, url: url, listGiftID: listGiftID) { result in
+            switch result {
+            case .success:
+                // If the addition is successful, set the alert message for success
                 self.alertMessage = "Gift added successfully."
-                self.showAlert = true
-                completion(true)
+            case .failure(let error):
+                // If there is an error, set the alert message for failure
+                self.alertMessage = "Failed to add gift"
             }
+            // Show the alert regardless of success or failure
+            self.showAlert = true
         }
     }
 }

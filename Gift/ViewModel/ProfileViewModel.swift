@@ -8,43 +8,45 @@ class ProfileViewModel: ObservableObject {
     @Published var phone: String = ""
     @Published var isUserLoggedOut = false
 
-    let firestore: Firestore
+    private let profileRepo: ProfileRepositoryInterface
     private let profileId: String
 
-    init(firestore: Firestore, profileId: String) {
-        self.firestore = firestore
+    init(profileRepo: ProfileRepositoryInterface, profileId: String) {
+        self.profileRepo = profileRepo
         self.profileId = profileId
     }
 
+    // Function to fetch user profile information
     func fetchUserProfile() {
-        let profileRef = firestore.collection("profiles").document(profileId)
-
-        profileRef.getDocument { [weak self] document, error in
+        // Call the repository method to fetch the user profile
+        profileRepo.fetchUserProfile(profileId: profileId) { [weak self] result in
             guard let self = self else { return }
-
-            if let error = error {
+            switch result {
+            case .success(let userProfile):
+                // On successful fetch, update published properties with the retrieved profile data
+                self.emailAddress = userProfile.emailAddress
+                self.fullname = userProfile.fullName
+                self.phone = userProfile.phoneNumber
+            case .failure(let error):
+                // Print error message if fetching the profile fails
                 print("Error fetching profile: \(error)")
-                return
-            }
-
-            if let document = document, document.exists {
-                let data = document.data()
-                self.emailAddress = data?["emailAddress"] as? String ?? ""
-                self.fullname = data?["fullName"] as? String ?? ""
-                self.phone = data?["phoneNumber"] as? String ?? ""
-            } else {
-                print("Profile does not exist.")
             }
         }
     }
 
+    // Function to disconnect (sign out) the user
     func disconnect() {
-        // Sign out the user
-        do {
-            try Auth.auth().signOut()
-            isUserLoggedOut = true
-        } catch let error {
-            print("Error signing out: \(error)")
+        // Call the repository method to sign out the user
+        profileRepo.disconnect { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success:
+                // On successful sign out, update the flag to indicate the user has logged out
+                self.isUserLoggedOut = true
+            case .failure(let error):
+                // Print error message if signing out fails
+                print("Error signing out: \(error)")
+            }
         }
     }
 }

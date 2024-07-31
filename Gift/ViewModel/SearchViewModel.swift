@@ -6,52 +6,42 @@ class SearchViewModel: ObservableObject {
     @Published var showAlert = false
     @Published var alertMessage = ""
 
-    let firestore: Firestore
-    let profileId: String
+    private let searchRepo: SearchRepositoryInterface
 
-    init(firestore: Firestore, profileId: String) {
-        self.firestore = firestore
-        self.profileId = profileId
+    init(searchRepo: SearchRepositoryInterface) {
+        self.searchRepo = searchRepo
     }
 
+    // Fetch all gift lists from Firestore
     func fetchDataFromFirestore() {
-        // Fetch all lists from Firestore
-        let listsRef = firestore.collection("listGifts")
-
-        listsRef.getDocuments { [weak self] snapshot, error in
+        searchRepo.fetchDataFromFirestore { [weak self] result in
             guard let self = self else { return }
-
-            if let error = error {
+            switch result {
+            case .success(let listGifts):
+                // Update the listGifts property with the fetched data
+                self.listGifts = listGifts
+            case .failure(let error):
+                // Show an alert and set an error message if fetching fails
                 self.showAlert = true
-                self.alertMessage = "Error fetching lists: \(error.localizedDescription)"
+                self.alertMessage = "Error fetching lists"
                 print("Error fetching lists: \(error)")
-                return
             }
-
-            self.listGifts = snapshot?.documents.compactMap { document in
-                try? document.data(as: ListGiftCodable.self)
-            } ?? []
         }
     }
 
+    // Search for a specific gift list by ID from Firestore
     func searchListByIdFromFirestore(id: UUID) {
-        let listRef = firestore.collection("listGifts").document(id.uuidString)
-
-        listRef.getDocument { [weak self] document, error in
+        searchRepo.searchListByIdFromFirestore(id: id) { [weak self] result in
             guard let self = self else { return }
-
-            if let error = error {
-                self.showAlert = true
-                self.alertMessage = "Error searching list: \(error.localizedDescription)"
-                print("Error searching list: \(error)")
-                return
-            }
-
-            if let document = document, document.exists, let listGift = try? document.data(as: ListGiftCodable.self) {
+            switch result {
+            case .success(let listGift):
+                // Update the listGifts property with the found list
                 self.listGifts = [listGift]
-            } else {
+            case .failure(let error):
+                // Show an alert and set an error message if searching fails
                 self.showAlert = true
-                self.alertMessage = "List not found."
+                self.alertMessage = "Error searching list"
+                print("Error searching list: \(error)")
             }
         }
     }

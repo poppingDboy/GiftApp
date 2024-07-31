@@ -6,8 +6,8 @@ struct DetailListView: View {
     @ObservedObject var viewModel: DetailListViewModel
     @State private var isShowingShareSheet = false
 
-    init(firestore: Firestore, listGift: ListGiftCodable) {
-        _viewModel = ObservedObject(wrappedValue: DetailListViewModel(firestore: firestore, list: listGift))
+    init(listGift: ListGiftCodable, giftRepo: ListGiftRepositoryInterface = ListGiftRepositoryFirebase()) {
+        _viewModel = ObservedObject(wrappedValue: DetailListViewModel(giftRepo: giftRepo, list: listGift))
     }
 
     var body: some View {
@@ -22,7 +22,7 @@ struct DetailListView: View {
 
                 Spacer()
 
-                NavigationLink(destination: CreateGiftView(firestore: viewModel.firestore, viewModelDetail: viewModel)) {
+                NavigationLink(destination: CreateGiftView(viewModelDetail: viewModel)) {
                     Text("Add new gift")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -46,14 +46,12 @@ struct DetailListView: View {
                             .padding()
                     } else {
                         ForEach(viewModel.giftsToPurchase) { gift in
-                            NavigationLink(destination: DetailGiftView(firestore: viewModel.firestore, gift: gift, listGift: viewModel.list)) {
+                            NavigationLink(destination: DetailGiftView(gift: gift, listGift: viewModel.list)) {
                                 GiftRow(gift: gift)
-                                    .listRowSeparatorTint(Color(.systemGray))
                             }
                         }
                     }
                 }
-                .background(Color(.white))
 
                 Section(header: Text("Has already been purchased")) {
                     if viewModel.purchasedGifts.isEmpty {
@@ -63,17 +61,14 @@ struct DetailListView: View {
                             .padding()
                     } else {
                         ForEach(viewModel.purchasedGifts) { gift in
-                            NavigationLink(destination: DetailGiftView(firestore: viewModel.firestore, gift: gift, listGift: viewModel.list)) {
+                            NavigationLink(destination: DetailGiftView(gift: gift, listGift: viewModel.list)) {
                                 GiftRow(gift: gift)
-                                    .listRowSeparatorTint(Color(.lightGray))
                             }
                         }
                     }
                 }
-                .background(Color(.white))
             }
-            .listStyle(.sidebar)
-            .background(Color(.white))
+            .listStyle(GroupedListStyle())
             .scrollContentBackground(.hidden)
 
             Spacer()
@@ -82,9 +77,8 @@ struct DetailListView: View {
                 Spacer()
 
                 Button(action: {
-                    viewModel.removeListGift { error in
-                        dismiss()
-                    }
+                    viewModel.removeListGift()
+                    dismiss()
                 }) {
                     Text("Delete List")
                         .font(.headline)
@@ -138,5 +132,7 @@ struct GiftRow: View {
 #Preview {
     let firestore = Firestore.firestore()
     let listGift = ListGiftCodable(name: "Sample List", dateCreation: Date(), dateExpiration: Date(), profileId: "1")
-    return DetailListView(firestore: firestore, listGift: listGift)
+    let giftRepo = ListGiftRepositoryFirebase() // Replace with actual implementation
+    return DetailListView(listGift: listGift, giftRepo: giftRepo)
 }
+

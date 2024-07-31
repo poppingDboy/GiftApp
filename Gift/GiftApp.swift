@@ -5,62 +5,41 @@ import FirebaseCore
 
 @main
 struct GiftApp: App {
+    // Use UIApplicationDelegateAdaptor to connect AppDelegate to the SwiftUI lifecycle
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
+    // State variables to manage user authentication status and profile data
     @State var isUserNotLogged: Bool = true
     @State var profile: ProfileCodable?
 
     var body: some Scene {
         WindowGroup {
+            // Conditionally render views based on authentication status
             if isUserNotLogged {
-                LoginView(viewModel: LoginViewModel(loggedAction: { logprofile in
-                    isUserNotLogged = false
-                    profile = logprofile
-                }))
-            } else if let profile {
+                // If the user is not logged in, show the LoginView
+                LoginView(viewModel: LoginViewModel(
+                    loginRepo: LoginRepositoryFirebase(), // Repository for Firebase login
+                    loggedAction: { logprofile in
+                        // Update state upon successful login
+                        isUserNotLogged = false
+                        profile = logprofile
+                    }
+                ))
+            } else if let profile = profile {
+                // If the user is logged in, show the MainMenuView
                 MainMenuView(profile: profile)
             }
-
-
         }
     }
 }
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    // This method is called when the app has finished launching
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Configure Firebase SDK
         FirebaseApp.configure()
         return true
     }
 }
 
-
-
-
-
-//@main
-//struct GiftApp: App {
-//    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-//    @State var isUserNotLogged: Bool = true
-//    @State var profileUser: ProfileCodable
-//
-//    var body: some Scene {
-//        WindowGroup {
-//            MainMenuView(profile: <#ProfileCodable#>)
-//                .fullScreenCover(isPresented: $isUserNotLogged, content: {
-//                    LoginView(viewModel: LoginViewModel(loggedAction: {
-//                        isUserNotLogged = false
-//                    }))
-//                })
-//                .onAppear(perform: {
-//                    // Check if the user is connected with Firebase; if connected, set isUserNotLogged to false
-//                    if Auth.auth().currentUser != nil {
-//                        isUserNotLogged = false
-//                    }
-//                })
-//        }
-//    }
-//
-//    init() {
-//        FirebaseApp.configure()
-//    }
-//}

@@ -61,16 +61,26 @@
 		E35F08BE2C31B2F1001F4209 /* DetailListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35F08BD2C31B2F1001F4209 /* DetailListViewModel.swift */; };
 		E35F08C02C31B307001F4209 /* DetailGiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35F08BF2C31B307001F4209 /* DetailGiftViewModel.swift */; };
 		E3EAD6642C42C98600CC1EC0 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6632C42C98600CC1EC0 /* ActivityView.swift */; };
-		E3EAD6672C45219100CC1EC0 /* LoginUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6662C45219100CC1EC0 /* LoginUseCaseTests.swift */; };
 		E3EAD66E2C47DD9300CC1EC0 /* ProfileCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD66D2C47DD9300CC1EC0 /* ProfileCodable.swift */; };
 		E3EAD6702C47EB6400CC1EC0 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD66F2C47EB6400CC1EC0 /* FirestoreManager.swift */; };
 		E3EAD6722C4854EF00CC1EC0 /* GiftCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6712C4854EF00CC1EC0 /* GiftCodable.swift */; };
 		E3EAD6742C48550B00CC1EC0 /* ListGiftCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6732C48550B00CC1EC0 /* ListGiftCodable.swift */; };
-		E3EAD6762C4AA73900CC1EC0 /* AuthentificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6752C4AA73900CC1EC0 /* AuthentificationManager.swift */; };
-		E3EAD6782C507E2F00CC1EC0 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6772C507E2F00CC1EC0 /* DataManager.swift */; };
 		E3EAD67A2C51C1D800CC1EC0 /* ListGiftDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6792C51C1D800CC1EC0 /* ListGiftDataManager.swift */; };
 		E3EAD67D2C573DDD00CC1EC0 /* ListGiftError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD67C2C573DDD00CC1EC0 /* ListGiftError.swift */; };
 		E3EAD67F2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD67E2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift */; };
+		E3EAD6832C59914900CC1EC0 /* DetailListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6822C59914900CC1EC0 /* DetailListViewModelTests.swift */; };
+		E3EAD6852C5996DC00CC1EC0 /* GiftDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6842C5996DC00CC1EC0 /* GiftDataManager.swift */; };
+		E3EAD6872C5998A500CC1EC0 /* GiftError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6862C5998A500CC1EC0 /* GiftError.swift */; };
+		E3EAD6892C599A3E00CC1EC0 /* GiftViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6882C599A3E00CC1EC0 /* GiftViewModelTests.swift */; };
+		E3EAD68B2C59A29100CC1EC0 /* DetailGiftViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD68A2C59A29100CC1EC0 /* DetailGiftViewModelTests.swift */; };
+		E3EAD68D2C59F2AB00CC1EC0 /* ProfileDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD68C2C59F2AB00CC1EC0 /* ProfileDataManager.swift */; };
+		E3EAD68F2C59F82500CC1EC0 /* ProfileViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD68E2C59F82500CC1EC0 /* ProfileViewModelTests.swift */; };
+		E3EAD6912C59FB1000CC1EC0 /* SearchDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6902C59FB1000CC1EC0 /* SearchDataManager.swift */; };
+		E3EAD6932C59FE7900CC1EC0 /* SearchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6922C59FE7900CC1EC0 /* SearchViewModelTests.swift */; };
+		E3EAD6952C5A00B300CC1EC0 /* AccountDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6942C5A00B300CC1EC0 /* AccountDataManager.swift */; };
+		E3EAD6972C5A053E00CC1EC0 /* LoginDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6962C5A053E00CC1EC0 /* LoginDataManager.swift */; };
+		E3EAD6992C5A157E00CC1EC0 /* AccountViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD6982C5A157E00CC1EC0 /* AccountViewModelTests.swift */; };
+		E3EAD69B2C5A172900CC1EC0 /* LoginViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3EAD69A2C5A172900CC1EC0 /* LoginViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,16 +131,26 @@
 		E35F08BF2C31B307001F4209 /* DetailGiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGiftViewModel.swift; sourceTree = "<group>"; };
 		E35F08C12C32AF66001F4209 /* Gift.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Gift.xctestplan; sourceTree = "<group>"; };
 		E3EAD6632C42C98600CC1EC0 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
-		E3EAD6662C45219100CC1EC0 /* LoginUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginUseCaseTests.swift; sourceTree = "<group>"; };
 		E3EAD66D2C47DD9300CC1EC0 /* ProfileCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCodable.swift; sourceTree = "<group>"; };
 		E3EAD66F2C47EB6400CC1EC0 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		E3EAD6712C4854EF00CC1EC0 /* GiftCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftCodable.swift; sourceTree = "<group>"; };
 		E3EAD6732C48550B00CC1EC0 /* ListGiftCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftCodable.swift; sourceTree = "<group>"; };
-		E3EAD6752C4AA73900CC1EC0 /* AuthentificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthentificationManager.swift; sourceTree = "<group>"; };
-		E3EAD6772C507E2F00CC1EC0 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		E3EAD6792C51C1D800CC1EC0 /* ListGiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftDataManager.swift; sourceTree = "<group>"; };
 		E3EAD67C2C573DDD00CC1EC0 /* ListGiftError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftError.swift; sourceTree = "<group>"; };
 		E3EAD67E2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListGiftViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD6822C59914900CC1EC0 /* DetailListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailListViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD6842C5996DC00CC1EC0 /* GiftDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftDataManager.swift; sourceTree = "<group>"; };
+		E3EAD6862C5998A500CC1EC0 /* GiftError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftError.swift; sourceTree = "<group>"; };
+		E3EAD6882C599A3E00CC1EC0 /* GiftViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD68A2C59A29100CC1EC0 /* DetailGiftViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGiftViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD68C2C59F2AB00CC1EC0 /* ProfileDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDataManager.swift; sourceTree = "<group>"; };
+		E3EAD68E2C59F82500CC1EC0 /* ProfileViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD6902C59FB1000CC1EC0 /* SearchDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDataManager.swift; sourceTree = "<group>"; };
+		E3EAD6922C59FE7900CC1EC0 /* SearchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD6942C5A00B300CC1EC0 /* AccountDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDataManager.swift; sourceTree = "<group>"; };
+		E3EAD6962C5A053E00CC1EC0 /* LoginDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginDataManager.swift; sourceTree = "<group>"; };
+		E3EAD6982C5A157E00CC1EC0 /* AccountViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModelTests.swift; sourceTree = "<group>"; };
+		E3EAD69A2C5A172900CC1EC0 /* LoginViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,8 +257,14 @@
 			isa = PBXGroup;
 			children = (
 				E334A48D2C1B36AA0034523E /* GiftTests.swift */,
-				E3EAD6662C45219100CC1EC0 /* LoginUseCaseTests.swift */,
 				E3EAD67E2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift */,
+				E3EAD6822C59914900CC1EC0 /* DetailListViewModelTests.swift */,
+				E3EAD6882C599A3E00CC1EC0 /* GiftViewModelTests.swift */,
+				E3EAD68A2C59A29100CC1EC0 /* DetailGiftViewModelTests.swift */,
+				E3EAD68E2C59F82500CC1EC0 /* ProfileViewModelTests.swift */,
+				E3EAD6922C59FE7900CC1EC0 /* SearchViewModelTests.swift */,
+				E3EAD6982C5A157E00CC1EC0 /* AccountViewModelTests.swift */,
+				E3EAD69A2C5A172900CC1EC0 /* LoginViewModelTests.swift */,
 			);
 			path = GiftTests;
 			sourceTree = "<group>";
@@ -295,9 +321,12 @@
 			isa = PBXGroup;
 			children = (
 				E3EAD66F2C47EB6400CC1EC0 /* FirestoreManager.swift */,
-				E3EAD6752C4AA73900CC1EC0 /* AuthentificationManager.swift */,
-				E3EAD6772C507E2F00CC1EC0 /* DataManager.swift */,
 				E3EAD6792C51C1D800CC1EC0 /* ListGiftDataManager.swift */,
+				E3EAD6842C5996DC00CC1EC0 /* GiftDataManager.swift */,
+				E3EAD68C2C59F2AB00CC1EC0 /* ProfileDataManager.swift */,
+				E3EAD6902C59FB1000CC1EC0 /* SearchDataManager.swift */,
+				E3EAD6942C5A00B300CC1EC0 /* AccountDataManager.swift */,
+				E3EAD6962C5A053E00CC1EC0 /* LoginDataManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -324,6 +353,7 @@
 			isa = PBXGroup;
 			children = (
 				E3EAD67C2C573DDD00CC1EC0 /* ListGiftError.swift */,
+				E3EAD6862C5998A500CC1EC0 /* GiftError.swift */,
 			);
 			path = Error;
 			sourceTree = "<group>";
@@ -518,9 +548,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3EAD6762C4AA73900CC1EC0 /* AuthentificationManager.swift in Sources */,
-				E3EAD6782C507E2F00CC1EC0 /* DataManager.swift in Sources */,
 				E35F08BA2C31B28E001F4209 /* SearchViewModel.swift in Sources */,
+				E3EAD6912C59FB1000CC1EC0 /* SearchDataManager.swift in Sources */,
 				E35F08C02C31B307001F4209 /* DetailGiftViewModel.swift in Sources */,
 				E334A4AC2C1B37910034523E /* MainMenuView.swift in Sources */,
 				E3EAD6742C48550B00CC1EC0 /* ListGiftCodable.swift in Sources */,
@@ -536,7 +565,11 @@
 				E3EAD6702C47EB6400CC1EC0 /* FirestoreManager.swift in Sources */,
 				E334A5082C2BA2540034523E /* DetailListView.swift in Sources */,
 				E334A4EF2C1F3EEC0034523E /* CreateListView.swift in Sources */,
+				E3EAD68D2C59F2AB00CC1EC0 /* ProfileDataManager.swift in Sources */,
 				E3EAD6722C4854EF00CC1EC0 /* GiftCodable.swift in Sources */,
+				E3EAD6852C5996DC00CC1EC0 /* GiftDataManager.swift in Sources */,
+				E3EAD6952C5A00B300CC1EC0 /* AccountDataManager.swift in Sources */,
+				E3EAD6972C5A053E00CC1EC0 /* LoginDataManager.swift in Sources */,
 				E35F08BC2C31B2D6001F4209 /* ProfileViewModel.swift in Sources */,
 				E334A4FF2C28F3000034523E /* AccountViewModel.swift in Sources */,
 				E3EAD6642C42C98600CC1EC0 /* ActivityView.swift in Sources */,
@@ -545,6 +578,7 @@
 				E3EAD67A2C51C1D800CC1EC0 /* ListGiftDataManager.swift in Sources */,
 				E334A47D2C1B36A80034523E /* GiftApp.swift in Sources */,
 				E334A4F32C2385680034523E /* SearchView.swift in Sources */,
+				E3EAD6872C5998A500CC1EC0 /* GiftError.swift in Sources */,
 				E35F08BE2C31B2F1001F4209 /* DetailListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -555,7 +589,13 @@
 			files = (
 				E3EAD67F2C579FAC00CC1EC0 /* ListGiftViewModelTests.swift in Sources */,
 				E334A48E2C1B36AA0034523E /* GiftTests.swift in Sources */,
-				E3EAD6672C45219100CC1EC0 /* LoginUseCaseTests.swift in Sources */,
+				E3EAD6932C59FE7900CC1EC0 /* SearchViewModelTests.swift in Sources */,
+				E3EAD69B2C5A172900CC1EC0 /* LoginViewModelTests.swift in Sources */,
+				E3EAD68B2C59A29100CC1EC0 /* DetailGiftViewModelTests.swift in Sources */,
+				E3EAD68F2C59F82500CC1EC0 /* ProfileViewModelTests.swift in Sources */,
+				E3EAD6992C5A157E00CC1EC0 /* AccountViewModelTests.swift in Sources */,
+				E3EAD6892C599A3E00CC1EC0 /* GiftViewModelTests.swift in Sources */,
+				E3EAD6832C59914900CC1EC0 /* DetailListViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,90 +5,23 @@ import FirebaseFirestore
 class FirestoreManager {
     private let db = Firestore.firestore()
 
+    // Function to save a profile to Firestore
     func saveProfileToFirestore(profile: ProfileCodable, completion: @escaping (Error?) -> Void) {
         do {
-            try db.collection("profiles").document(profile.id.uuidString).setData(from: profile) { error in
+            // Attempt to convert the ProfileCodable instance into Firestore data and save it
+            try db.collection("profiles").document(profile.id).setData(from: profile) { error in
                 if let error = error {
+                    // Log an error if saving the profile to Firestore fails
                     print("Error writing profile to Firestore: \(error.localizedDescription)")
                 }
+                // Call the completion handler with the error if any
                 completion(error)
             }
         } catch let error {
+            // Log an error if converting the profile to Firestore data fails
             print("Error converting profile to Firestore data: \(error.localizedDescription)")
+            // Call the completion handler with the conversion error
             completion(error)
         }
     }
-
-    func fetchProfileFromFirestore(profileId: UUID, completion: @escaping (ProfileCodable?) -> Void) {
-        let docRef = db.collection("profiles").document(profileId.uuidString)
-
-        docRef.getDocument { (document, error) in
-            if let document = document, document.exists {
-                do {
-                    let profileCodable = try document.data(as: ProfileCodable.self)
-                    completion(profileCodable)
-                } catch let error {
-                    print("Error decoding profile from Firestore: \(error.localizedDescription)")
-                    completion(nil)
-                }
-            } else {
-                if let error = error {
-                    print("Error fetching profile from Firestore: \(error.localizedDescription)")
-                } else {
-                    print("Profile does not exist in Firestore")
-                }
-                completion(nil)
-            }
-        }
-    }
 }
-
-
-
-
-
-
-
-
-
-
-//import Foundation
-//import Firebase
-//import FirebaseFirestore
-//
-//class FirestoreManager {
-//    private let db = Firestore.firestore()
-//
-//    func saveProfileToFirestore(profile: ProfileCodable, completion: @escaping (Error?) -> Void) {
-//        let profileCodable = profile
-//
-//        do {
-//            try db.collection("profiles").document(profile.id.uuidString).setData(from: profileCodable) { error in
-//                completion(error)
-//            }
-//        } catch let error {
-//            print("Error writing profile to Firestore: \(error)")
-//            completion(error)
-//        }
-//    }
-//
-//    func fetchProfileFromFirestore(profileId: UUID, completion: @escaping (ProfileCodable?) -> Void) {
-//        let docRef = db.collection("profiles").document(profileId.uuidString)
-//
-//        docRef.getDocument { (document, error) in
-//            if let document = document, document.exists {
-//                do {
-//                    let profileCodable = try document.data(as: ProfileCodable.self)
-//                    completion(profileCodable)
-//                } catch let error {
-//                    print("Error decoding profile from Firestore: \(error)")
-//                    completion(nil)
-//                }
-//            } else {
-//                print("Document does not exist")
-//                completion(nil)
-//            }
-//        }
-//    }
-//}
-//

@@ -122,8 +122,3 @@ struct AccountCreateView: View {
         }
     }
 }
-
-#Preview {
-    return AccountCreateView(viewModel: AccountViewModel(loggedAction: {}))
-}
-

@@ -1,10 +1,3 @@
-//
-//  GiftTests.swift
-//  GiftTests
-//
-//  Created by MARTEAU Dylan on 13/06/2024.
-//
-
 import XCTest
 @testable import Gift
 
