@@ -21,6 +21,11 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Decode and Import Certificate
+        run: |
+          echo "${{ secrets.CERTIFICATE_BASE64 }}" | base64 -d > certificate.p12
+          security import certificate.p12 -P ${{ Azertyuiop9! }} -A
+
       - name: Build and test
         run: |
           xcodebuild -scheme Gift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' clean test
