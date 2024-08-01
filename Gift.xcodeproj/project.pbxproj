@@ -12,8 +12,6 @@
 		E334A4812C1B36A90034523E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E334A4802C1B36A90034523E /* Assets.xcassets */; };
 		E334A4842C1B36A90034523E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E334A4832C1B36A90034523E /* Preview Assets.xcassets */; };
 		E334A48E2C1B36AA0034523E /* GiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334A48D2C1B36AA0034523E /* GiftTests.swift */; };
-		E334A4982C1B36AA0034523E /* GiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334A4972C1B36AA0034523E /* GiftUITests.swift */; };
-		E334A49A2C1B36AA0034523E /* GiftUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334A4992C1B36AA0034523E /* GiftUITestsLaunchTests.swift */; };
 		E334A4A82C1B37240034523E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334A4A72C1B37240034523E /* LoginView.swift */; };
 		E334A4AA2C1B37590034523E /* AccountCreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334A4A92C1B37590034523E /* AccountCreateView.swift */; };
 		E334A4AC2C1B37910034523E /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334A4AB2C1B37910034523E /* MainMenuView.swift */; };
@@ -109,8 +107,6 @@
 		E334A4892C1B36AA0034523E /* GiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E334A48D2C1B36AA0034523E /* GiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftTests.swift; sourceTree = "<group>"; };
 		E334A4932C1B36AA0034523E /* GiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E334A4972C1B36AA0034523E /* GiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftUITests.swift; sourceTree = "<group>"; };
-		E334A4992C1B36AA0034523E /* GiftUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiftUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		E334A4A72C1B37240034523E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		E334A4A92C1B37590034523E /* AccountCreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCreateView.swift; sourceTree = "<group>"; };
 		E334A4AB2C1B37910034523E /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
@@ -213,7 +209,6 @@
 				E334A4EA2C1B412A0034523E /* GoogleService-Info.plist */,
 				E334A47B2C1B36A80034523E /* Gift */,
 				E334A48C2C1B36AA0034523E /* GiftTests */,
-				E334A4962C1B36AA0034523E /* GiftUITests */,
 				E334A47A2C1B36A80034523E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -267,15 +262,6 @@
 				E3EAD69A2C5A172900CC1EC0 /* LoginViewModelTests.swift */,
 			);
 			path = GiftTests;
-			sourceTree = "<group>";
-		};
-		E334A4962C1B36AA0034523E /* GiftUITests */ = {
-			isa = PBXGroup;
-			children = (
-				E334A4972C1B36AA0034523E /* GiftUITests.swift */,
-				E334A4992C1B36AA0034523E /* GiftUITestsLaunchTests.swift */,
-			);
-			path = GiftUITests;
 			sourceTree = "<group>";
 		};
 		E334A4A62C1B370F0034523E /* View */ = {
@@ -603,8 +589,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E334A49A2C1B36AA0034523E /* GiftUITestsLaunchTests.swift in Sources */,
-				E334A4982C1B36AA0034523E /* GiftUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

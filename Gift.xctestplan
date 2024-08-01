@@ -28,15 +28,6 @@
         "identifier" : "E334A4882C1B36AA0034523E",
         "name" : "GiftTests"
       }
-    },
-    {
-      "enabled" : false,
-      "parallelizable" : true,
-      "target" : {
-        "containerPath" : "container:Gift.xcodeproj",
-        "identifier" : "E334A4922C1B36AA0034523E",
-        "name" : "GiftUITests"
-      }
     }
   ],
   "version" : 1
