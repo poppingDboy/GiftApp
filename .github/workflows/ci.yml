@@ -23,30 +23,20 @@ jobs:
 
       - name: Decode and Import Certificate
         run: |
-          # Decode the base64-encoded certificate
           echo "${{ secrets.CERTIFICATE_BASE64 }}" | base64 --decode > certificate.p12
-
-          # Decode the base64-encoded provisioning profile
-          echo "${{ secrets.PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > provisioning_profile.mobileprovision
-
-          # Create and unlock a keychain
           security create-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
-          security unlock-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
-
-          # Import the certificate into the keychain
           security import certificate.p12 -k build.keychain -P "${{ secrets.CERTIFICATE_PASSWORD }}" -A
-
-          # Import the provisioning profile
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp provisioning_profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-
-          # Set the keychain as the default
           security list-keychains -d user -s build.keychain
+          security unlock-keychain -p "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
           security default-keychain -s build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
 
-          # Trust the certificate
-          security set-key-partition-list -S apple-tool:,apple: -s -k "${{ secrets.CERTIFICATE_PASSWORD }}" build.keychain
-
-      - name: Build and test
+      - name: Install Provisioning Profile
         run: |
-          xcodebuild -scheme Gift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' clean build test -allowProvisioningUpdates
+          echo "${{ secrets.PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > gitapp.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp gitapp.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+      - name: Build and Test
+        run: |
+          xcodebuild -scheme Gift -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' clean test
